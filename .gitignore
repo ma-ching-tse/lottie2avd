@@ -3,3 +3,6 @@ node_modules/
 test.js
 test.xml
 package-lock.json
+.npm-cache/
+*.out.xml
+*.avd.xml

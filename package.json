@@ -8,7 +8,9 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build": "browserify src/index.js -o lib/build.js -t [ babelify --presets [ babel-preset-es2015 ] ]"
+    "build": "browserify src/index.js -o lib/build.js -t [ babelify --presets [ babel-preset-es2015 ] ]",
+    "build:web": "browserify src/index.js -o docs/avd.bundle.js -s lottieToAvd",
+    "pages": "npm run build:web"
   },
   "repository": {
     "type": "git",
@@ -21,6 +23,7 @@
   },
   "homepage": "https://github.com/garawaa/lottie-to-avd#readme",
   "dependencies": {
+    "express": "^5.2.1",
     "transformation-matrix": "^2.16.1",
     "transformatrix": "^1.1.1",
     "xml": "^1.0.1",

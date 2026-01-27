@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Lottie to AVD</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #0b0d12;
+        --card: #131722;
+        --text: #e8ecf1;
+        --muted: #9aa6b2;
+        --accent: #5b9cff;
+        --accent-strong: #3f86ff;
+        --border: #1f2533;
+        --danger: #ff6b6b;
+        --ok: #3ddc97;
+      }
+
+      * { box-sizing: border-box; }
+
+      body {
+        margin: 0;
+        font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        background: radial-gradient(1200px 600px at 10% -20%, #162033 0%, var(--bg) 55%);
+        color: var(--text);
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 24px;
+      }
+
+      .app {
+        width: min(1100px, 100%);
+        background: color-mix(in srgb, var(--card) 92%, black 8%);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+        overflow: hidden;
+      }
+
+      header {
+        padding: 20px 24px;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        align-items: baseline;
+        justify-content: space-between;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 18px;
+        letter-spacing: 0.2px;
+      }
+
+      .sub {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 520px;
+        gap: 0;
+      }
+
+      section {
+        padding: 20px 24px 24px;
+        min-height: 520px;
+      }
+
+      section + section {
+        border-left: 1px solid var(--border);
+      }
+
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: center;
+        margin-bottom: 12px;
+      }
+
+      .hint {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 8px 0 14px;
+      }
+
+      .preview {
+        margin: 10px 0 14px;
+      }
+
+      .preview-title {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0 0 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+
+      .preview-box {
+        height: 200px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: #0d111a;
+        display: grid;
+        place-items: center;
+        overflow: hidden;
+        position: relative;
+      }
+
+      .preview-box::after {
+        content: "预览区域";
+        position: absolute;
+        inset: auto 0 8px 0;
+        text-align: center;
+        font-size: 11px;
+        color: color-mix(in srgb, var(--muted) 80%, transparent);
+        pointer-events: none;
+      }
+
+      .preview-box.has-animation::after {
+        content: "";
+      }
+
+      input[type="file"] {
+        display: block;
+        padding: 10px;
+        border: 1px dashed var(--border);
+        border-radius: 10px;
+        width: 100%;
+        background: #0d111a;
+        color: var(--muted);
+      }
+
+      button {
+        border: 1px solid transparent;
+        background: var(--accent);
+        color: white;
+        padding: 9px 14px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.04s ease, background 0.15s ease;
+      }
+
+      button:hover { background: var(--accent-strong); }
+      button:active { transform: translateY(1px); }
+      button.secondary {
+        background: transparent;
+        border-color: var(--border);
+        color: var(--text);
+      }
+
+      button[disabled] {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .status {
+        min-height: 22px;
+        font-size: 13px;
+        margin: 8px 0 12px;
+      }
+
+      .status.ok { color: var(--ok); }
+      .status.err { color: var(--danger); }
+
+      textarea, pre {
+        width: 100%;
+        height: 300px;
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        background: #0d111a;
+        color: var(--text);
+        padding: 14px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        font-size: 12.5px;
+        line-height: 1.5;
+        overflow: auto;
+        margin: 0;
+        white-space: pre;
+      }
+
+      textarea {
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+
+      .label {
+        font-size: 12px;
+        color: var(--muted);
+        margin: 0 0 8px;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+      }
+
+      footer {
+        border-top: 1px solid var(--border);
+        padding: 12px 24px 16px;
+        font-size: 12px;
+        color: var(--muted);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 16px;
+        justify-content: space-between;
+      }
+
+      @media (max-width: 980px) {
+        main { grid-template-columns: 1fr; }
+        section + section { border-left: none; border-top: 1px solid var(--border); }
+        textarea, pre { height: 320px; }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <h1>Lottie → Android AVD</h1>
+        <div class="sub">本地转换：上传 JSON，生成 AnimatedVectorDrawable XML</div>
+      </header>
+
+      <main>
+        <section>
+          <p class="label">输入 JSON</p>
+          <div class="row">
+            <input id="file" type="file" accept="application/json,.json" />
+          </div>
+          <div class="preview">
+            <p class="preview-title">输入预览</p>
+            <div id="inputPreview" class="preview-box" aria-label="输入动画预览"></div>
+          </div>
+          <div class="hint">也可以直接把 JSON 粘贴到下面。</div>
+          <textarea id="json" placeholder="在这里粘贴 Lottie JSON..."></textarea>
+        </section>
+
+        <section>
+          <p class="label">输出 XML</p>
+          <div class="row">
+            <button id="convert">转换</button>
+            <button id="download" class="secondary" disabled>下载 XML</button>
+            <button id="clear" class="secondary">清空</button>
+          </div>
+          <div id="status" class="status"></div>
+          <div class="preview">
+            <p class="preview-title">输出预览</p>
+            <div id="outputPreview" class="preview-box" aria-label="输出动画预览"></div>
+          </div>
+          <pre id="xml" aria-live="polite"></pre>
+        </section>
+      </main>
+
+      <footer>
+        <div>接口：<code>POST /api/convert</code></div>
+        <div>把生成的 XML 放到 <code>app/src/main/res/drawable/</code></div>
+      </footer>
+    </div>
+
+    <script src="https://unpkg.com/lottie-web@5.12.2/build/player/lottie.min.js"></script>
+    <script>
+      const fileInput = document.getElementById('file');
+      const jsonArea = document.getElementById('json');
+      const xmlPre = document.getElementById('xml');
+      const statusEl = document.getElementById('status');
+      const convertBtn = document.getElementById('convert');
+      const downloadBtn = document.getElementById('download');
+      const clearBtn = document.getElementById('clear');
+      const inputPreview = document.getElementById('inputPreview');
+      const outputPreview = document.getElementById('outputPreview');
+
+      let lastFileName = 'converted.avd.xml';
+      let lastXml = '';
+      let currentAnimationData = null;
+      let inputAnim = null;
+      let outputAnim = null;
+
+      function setStatus(message, kind) {
+        statusEl.textContent = message || '';
+        statusEl.classList.remove('ok', 'err');
+        if (kind) statusEl.classList.add(kind);
+      }
+
+      function guessOutputName(inputName) {
+        if (!inputName) return 'converted.avd.xml';
+        return inputName.replace(/\.json$/i, '') + '.avd.xml';
+      }
+
+      function destroyAnim(instance) {
+        if (instance && typeof instance.destroy === 'function') {
+          instance.destroy();
+        }
+      }
+
+      function cloneAnimationData(animationData) {
+        if (!animationData) return null;
+        if (typeof structuredClone === 'function') {
+          return structuredClone(animationData);
+        }
+        return JSON.parse(JSON.stringify(animationData));
+      }
+
+      function renderPreview(container, animationData, previousInstance) {
+        destroyAnim(previousInstance);
+        container.classList.remove('has-animation');
+        container.innerHTML = '';
+
+        if (!animationData || !window.lottie) {
+          return null;
+        }
+
+        // lottie-web mutates animation data internally; clone to avoid cross-preview conflicts.
+        const safeAnimationData = cloneAnimationData(animationData);
+        const instance = window.lottie.loadAnimation({
+          container,
+          renderer: 'svg',
+          loop: true,
+          autoplay: true,
+          animationData: safeAnimationData,
+          rendererSettings: {
+            preserveAspectRatio: 'xMidYMid meet',
+          },
+        });
+
+        container.classList.add('has-animation');
+        return instance;
+      }
+
+      function updateInputPreview(animationData) {
+        inputAnim = renderPreview(inputPreview, animationData, inputAnim);
+      }
+
+      function updateOutputPreview(animationData) {
+        outputAnim = renderPreview(outputPreview, animationData, outputAnim);
+      }
+
+      function tryParseAnimation(raw) {
+        try {
+          return JSON.parse(raw);
+        } catch (err) {
+          return null;
+        }
+      }
+
+      fileInput.addEventListener('change', async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        lastFileName = guessOutputName(file.name);
+        try {
+          const text = await file.text();
+          jsonArea.value = text;
+          const parsed = tryParseAnimation(text);
+          if (parsed) {
+            currentAnimationData = parsed;
+            updateInputPreview(parsed);
+          }
+          setStatus(`已载入：${file.name}`, 'ok');
+        } catch (err) {
+          setStatus('读取文件失败：' + (err.message || err), 'err');
+        }
+      });
+
+      convertBtn.addEventListener('click', async () => {
+        const raw = jsonArea.value.trim();
+        if (!raw) {
+          setStatus('请先上传或粘贴 JSON。', 'err');
+          return;
+        }
+
+        let parsed;
+        try {
+          parsed = JSON.parse(raw);
+        } catch (err) {
+          setStatus('JSON 解析失败：' + (err.message || err), 'err');
+          return;
+        }
+
+        currentAnimationData = parsed;
+        updateInputPreview(parsed);
+        convertBtn.disabled = true;
+        downloadBtn.disabled = true;
+        setStatus('转换中…');
+
+        try {
+          const resp = await fetch('/api/convert', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(parsed),
+          });
+
+          const data = await resp.json().catch(() => ({}));
+          if (!resp.ok) {
+            throw new Error(data.error || `转换失败（HTTP ${resp.status}）`);
+          }
+
+          lastXml = data.xml || '';
+          xmlPre.textContent = lastXml;
+          updateOutputPreview(currentAnimationData);
+          downloadBtn.disabled = !lastXml;
+          setStatus('转换成功。', 'ok');
+        } catch (err) {
+          lastXml = '';
+          xmlPre.textContent = '';
+          setStatus(err.message || String(err), 'err');
+        } finally {
+          convertBtn.disabled = false;
+        }
+      });
+
+      downloadBtn.addEventListener('click', () => {
+        if (!lastXml) return;
+        const blob = new Blob([lastXml], { type: 'application/xml' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = lastFileName;
+        a.click();
+        URL.revokeObjectURL(url);
+      });
+
+      clearBtn.addEventListener('click', () => {
+        jsonArea.value = '';
+        xmlPre.textContent = '';
+        lastXml = '';
+        currentAnimationData = null;
+        destroyAnim(inputAnim);
+        destroyAnim(outputAnim);
+        inputAnim = null;
+        outputAnim = null;
+        inputPreview.classList.remove('has-animation');
+        outputPreview.classList.remove('has-animation');
+        inputPreview.innerHTML = '';
+        outputPreview.innerHTML = '';
+        downloadBtn.disabled = true;
+        setStatus('');
+      });
+    </script>
+  </body>
+</html>
