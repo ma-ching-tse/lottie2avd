@@ -253,10 +253,6 @@
             <button id="clear" class="secondary">清空</button>
           </div>
           <div id="status" class="status"></div>
-          <div class="preview">
-            <p class="preview-title">输出预览</p>
-            <div id="outputPreview" class="preview-box" aria-label="输出动画预览"></div>
-          </div>
           <pre id="xml" aria-live="polite"></pre>
         </section>
       </main>
@@ -277,13 +273,11 @@
       const downloadBtn = document.getElementById('download');
       const clearBtn = document.getElementById('clear');
       const inputPreview = document.getElementById('inputPreview');
-      const outputPreview = document.getElementById('outputPreview');
 
       let lastFileName = 'converted.avd.xml';
       let lastXml = '';
       let currentAnimationData = null;
       let inputAnim = null;
-      let outputAnim = null;
 
       function setStatus(message, kind) {
         statusEl.textContent = message || '';
@@ -338,10 +332,6 @@
 
       function updateInputPreview(animationData) {
         inputAnim = renderPreview(inputPreview, animationData, inputAnim);
-      }
-
-      function updateOutputPreview(animationData) {
-        outputAnim = renderPreview(outputPreview, animationData, outputAnim);
       }
 
       function tryParseAnimation(raw) {
@@ -405,7 +395,6 @@
 
           lastXml = data.xml || '';
           xmlPre.textContent = lastXml;
-          updateOutputPreview(currentAnimationData);
           downloadBtn.disabled = !lastXml;
           setStatus('转换成功。', 'ok');
         } catch (err) {
@@ -434,13 +423,9 @@
         lastXml = '';
         currentAnimationData = null;
         destroyAnim(inputAnim);
-        destroyAnim(outputAnim);
         inputAnim = null;
-        outputAnim = null;
         inputPreview.classList.remove('has-animation');
-        outputPreview.classList.remove('has-animation');
         inputPreview.innerHTML = '';
-        outputPreview.innerHTML = '';
         downloadBtn.disabled = true;
         setStatus('');
       });
